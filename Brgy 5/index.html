@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resident Registration System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: #f0f0f0;
+            color: #666;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-info h3 {
+            color: #667eea;
+        }
+
+        .info-box {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .info-box p {
+            margin: 8px 0;
+            color: #2d3748;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .resident-list {
+            margin-top: 30px;
+        }
+
+        .resident-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resident-item-info {
+            flex: 1;
+        }
+
+        .resident-item-info h4 {
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .resident-item-info p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .badge {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login/Signup Screen -->
+        <div id="authScreen" class="card">
+            <div class="header">
+                <div class="icon">👥</div>
+                <h1>Barangay Resident Registration</h1>
+                <p>Management System</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab(this, 'login')">Login</button>
+                <button class="tab-btn" onclick="showTab(this, 'signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginTab">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password">
+                </div>
+                <button class="btn btn-primary" onclick="handleLogin()">Login</button>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupTab" class="hidden">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupFullName" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signupUsername" placeholder="Choose username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" placeholder="Choose password">
+                </div>
+                <button class="btn btn-primary" onclick="handleSignup()">Create Account</button>
+            </div>
+        </div>
+
+        <!-- Main Registration Screen -->
+        <div id="mainScreen" class="hidden">
+            <div class="card">
+                <div class="user-info">
+                    <div>
+                        <h3 id="welcomeName">Welcome!</h3>
+                        <p>Official Registration Portal</p>
+                    </div>
+                    <button class="btn btn-danger" style="width: auto;" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Step 1: Input Resident Data -->
+            <div id="step1" class="card">
+    <h2 style="margin-bottom: 20px; color: #2d3748;">New Resident Registration</h2>
+
+    <!-- Family Information -->
+    <div class="form-row">
+        <div class="form-group">
+            <label>Family ID (if existing)</label>
+            <input type="text" id="familyId" placeholder="Enter existing Family ID (optional)">
+        </div>
+        <div class="form-group">
+            <label>Family Name</label>
+            <input type="text" id="familyName" placeholder="Enter family name">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Address</label>
+        <input type="text" id="familyAddress" placeholder="Enter family address">
+    </div>
+    <div class="form-group">
+        <label>Head of Family</label>
+        <input type="text" id="headOfFamily" placeholder="Enter head of family name">
+    </div>
+
+    <!-- Resident Information -->
+    <div class="form-row">
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="firstName" placeholder="Enter first name">
+        </div>
+        <div class="form-group">
+            <label>Middle Name</label>
+            <input type="text" id="middleName" placeholder="Enter middle name">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lastName" placeholder="Enter last name">
+        </div>
+        <div class="form-group">
+            <label>Suffix (optional)</label>
+            <input type="text" id="suffix" placeholder="Jr., Sr., III, etc.">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Gender</label>
+            <select id="gender">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="dob">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Civil Status</label>
+            <select id="civilStatus">
+                <option value="">Select Status</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Widowed">Widowed</option>
+                <option value="Separated">Separated</option>
+                <option value="Divorced">Divorced</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Relationship to Head</label>
+            <select id="relationshipToHead">
+                <option value="">Select Relationship</option>
+                <option value="Head">Head of Family</option>
+                <option value="Spouse">Spouse</option>
+                <option value="Child">Child</option>
+                <option value="Parent">Parent</option>
+                <option value="Sibling">Sibling</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Occupation / Employment Status</label>
+            <input type="text" id="occupation" placeholder="Enter occupation or employment status">
+        </div>
+        <div class="form-group">
+            <label>Educational Attainment</label>
+            <input type="text" id="education" placeholder="Enter educational attainment">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label>Contact Number</label>
+            <input type="text" id="contactNumber" placeholder="Enter contact number">
+        </div>
+        <div class="form-group">
+            <label>Disability Status</label>
+            <input type="text" id="disabilityStatus" placeholder="Enter disability status">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Religion</label>
+        <input type="text" id="religion" placeholder="Enter religion">
+    </div>
+
+    <button class="btn btn-primary" onclick="proceedToFamilyCheck()">Continue</button>
+</div>
+
+
+            <!-- Step 2: Family Check -->
+            <div id="step2" class="card hidden">
+                <h2 style="margin-bottom: 20px; color: #2d3748;">Family Check</h2>
+                <div class="info-box">
+                    <p><strong>Resident:</strong> <span id="residentName"></span></p>
+                </div>
+                <p style="font-size: 18px; margin: 20px 0; color: #2d3748;">Does this resident belong to an existing family?</p>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="handleNewFamily()">No - Create New Family</button>
+                    <button class="btn btn-success" onclick="showExistingFamilyForm()">Yes - Add to Existing</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Existing Family Form -->
+            <div id="step3" class="card hidden">
+    <h2 style="margin-bottom: 20px; color: #2d3748;">Add to Existing Family</h2>
+    <div class="form-group">
+        <label>Family ID or Head Name</label>
+        <input type="text" id="familyInput" placeholder="Enter Family ID or Head Name">
+    </div>
+    <div class="form-group">
+        <label>Relationship to Head</label>
+        <select id="relationship">
+            <option value="">Select Relationship</option>
+            <option value="Spouse">Spouse</option>
+            <option value="Child">Child</option>
+            <option value="Parent">Parent</option>
+            <option value="Sibling">Sibling</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+    <button class="btn btn-success" onclick="handleExistingFamily()">Register Resident</button>
+</div>
+
+
+            <!-- Step 4: Success -->
+            <div id="step4" class="card hidden">
+                <div class="icon" style="background: #48bb78; font-size: 40px;">✓</div>
+                <h2 style="text-align: center; color: #48bb78; margin-bottom: 20px;">Registration Complete!</h2>
+                <p style="text-align: center; color: #718096; margin-bottom: 30px;">Resident has been successfully registered.</p>
+                <div class="info-box" id="registrationDetails"></div>
+                <button class="btn btn-primary" onclick="resetForm()">Register Another Resident</button>
+            </div>
+
+            <!-- Registered Residents List -->
+            <div id="residentsList" class="card">
+                <h2 style="margin-bottom: 20px; color: #2d3748;">Registered Residents (<span id="residentCount">0</span>)</h2>
+                <div id="residentsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+let currentUser = null;
+let residentData = {};
+
+// Tab switching
+function showTab(btn, tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.getElementById('loginTab').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('signupTab').classList.toggle('hidden', tab !== 'signup');
+}
+
+// Authentication
+async function handleSignup() {
+    const fullName = document.getElementById('signupFullName').value;
+    const username = document.getElementById('signupUsername').value;
+    const password = document.getElementById('signupPassword').value;
+
+    if (!fullName || !username || !password) {
+        alert('Please fill all fields');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('action', 'signup');
+    formData.append('full_name', fullName);
+    formData.append('username', username);
+    formData.append('password', password);
+
+    const response = await fetch('assets/auth.php', { method: 'POST', body: formData });
+    const data = await response.json();
+    
+    if (data.success) {
+        alert('Account created! Please login.');
+        showTab(document.querySelector('.tab-btn'), 'login');
+        document.getElementById('signupFullName').value = '';
+        document.getElementById('signupUsername').value = '';
+        document.getElementById('signupPassword').value = '';
+    } else {
+        alert(data.message);
+    }
+}
+
+async function handleLogin() {
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    if (!username || !password) {
+        alert('Please fill all fields');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('action', 'login');
+    formData.append('username', username);
+    formData.append('password', password);
+
+    const response = await fetch('assets/auth.php', { method: 'POST', body: formData });
+    const data = await response.json();
+    
+    if (data.success) {
+        currentUser = data.user;
+        showMainScreen();
+    } else {
+        alert(data.message);
+    }
+}
+
+async function handleLogout() {
+    const formData = new FormData();
+    formData.append('action', 'logout');
+    await fetch('assets/auth.php', { method: 'POST', body: formData });
+    currentUser = null;
+    document.getElementById('authScreen').classList.remove('hidden');
+    document.getElementById('mainScreen').classList.add('hidden');
+}
+
+function showMainScreen() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('mainScreen').classList.remove('hidden');
+    document.getElementById('welcomeName').textContent = `Welcome, ${currentUser.full_name}!`;
+    loadResidents();
+}
+
+// Registration Flow
+function proceedToFamilyCheck() {
+    const firstNameEl = document.getElementById('firstName');
+    const lastNameEl = document.getElementById('lastName');
+    const genderEl = document.getElementById('gender');
+    const dobEl = document.getElementById('dob');
+
+    if (!firstNameEl || !lastNameEl || !genderEl || !dobEl) {
+        console.error('One or more required fields are missing in the HTML.');
+        alert('Form fields are missing. Please refresh the page.');
+        return;
+    }
+
+    const firstName = firstNameEl.value.trim();
+    const lastName = lastNameEl.value.trim();
+    const gender = genderEl.value;
+    const dob = dobEl.value;
+
+    if (!firstName || !lastName || !gender || !dob) {
+        alert('Please fill all fields');
+        return;
+    }
+
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+
+    residentData = { firstName, lastName, gender, dob, age };
+
+    const residentNameEl = document.getElementById('residentName');
+    if (residentNameEl) residentNameEl.textContent = `${firstName} ${lastName}`;
+
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+}
+
+function showExistingFamilyForm() {
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.remove('hidden');
+    // Removed loadFamilies() because Step 3 uses a text input now
+}
+
+// Add resident to existing family
+async function handleExistingFamily() {
+    const familyIdentifier = document.getElementById('familyInput').value.trim();
+    const relationship = document.getElementById('relationship').value;
+
+    if (!familyIdentifier || !relationship) {
+        alert('Please fill all fields');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('action', 'add_to_existing_family');
+    formData.append('first_name', residentData.firstName);
+    formData.append('last_name', residentData.lastName);
+    formData.append('gender', residentData.gender);
+    formData.append('date_of_birth', residentData.dob);
+    formData.append('age', residentData.age);
+    formData.append('relationship', relationship);
+    formData.append('family_identifier', familyIdentifier);
+
+    try {
+        const response = await fetch('assets/resident_handler.php', { method: 'POST', body: formData });
+        const data = await response.json();
+
+        if (data.success) {
+            residentData.familyCode = data.family_code;
+            residentData.relationship = relationship;
+            showSuccess(residentData);
+        } else {
+            alert('Failed: ' + data.message);
+        }
+    } catch (err) {
+        console.error('Error submitting resident:', err);
+        alert('An error occurred. Check console for details.');
+    }
+}
+
+function showSuccess(details) {
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.add('hidden');
+    document.getElementById('step4').classList.remove('hidden');
+
+    const detailsHtml = `
+        <p><strong>Name:</strong> ${details.firstName} ${details.lastName}</p>
+        <p><strong>Age:</strong> ${details.age}</p>
+        <p><strong>Gender:</strong> ${details.gender}</p>
+        <p><strong>Family Code:</strong> ${details.familyCode}</p>
+        <p><strong>Relationship:</strong> ${details.relationship}</p>
+        <p><strong>Registered By:</strong> ${currentUser.full_name}</p>
+    `;
+    document.getElementById('registrationDetails').innerHTML = detailsHtml;
+    loadResidents();
+}
+
+function resetForm() {
+    ['firstName','lastName','age','gender','relationship'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.value = '';
+    });
+
+    document.getElementById('step1').classList.remove('hidden');
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.add('hidden');
+    document.getElementById('step4').classList.add('hidden');
+
+    residentData = {};
+}
+
+// Load registered residents
+async function loadResidents() {
+    const formData = new FormData();
+    formData.append('action', 'get_residents');
+
+    try {
+        const response = await fetch('assets/resident_handler.php', { method: 'POST', body: formData });
+        const data = await response.json();
+
+        if (data.success) {
+            const container = document.getElementById('residentsContainer');
+            document.getElementById('residentCount').textContent = data.residents.length;
+
+            if (data.residents.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#718096;">No residents registered yet.</p>';
+                return;
+            }
+
+            container.innerHTML = data.residents.map(r => `
+                <div class="resident-item">
+                    <div class="resident-item-info">
+                        <h4>${r.first_name} ${r.last_name}</h4>
+                        <p>${r.age} years old • ${r.gender}</p>
+                        <p>Family: ${r.family_code} • ${r.relationship_to_head}</p>
+                    </div>
+                    <div class="badge">${r.family_code}</div>
+                </div>
+            `).join('');
+        }
+    } catch (err) {
+        console.error('Error loading residents:', err);
+    }
+}
+</script>
+
+</body>
+</html>
